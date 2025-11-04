@@ -1,0 +1,1 @@
+might need ```chmod +x scripts/build-worklet.sh``` if permissions are denied for running the script
