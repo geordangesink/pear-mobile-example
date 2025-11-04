@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { documentDirectory } from 'expo-file-system'
 import run from 'pear-run'
-import bundle from './app.bundle.js'
+import bundle from './index.bundle.js'
 import RPC from 'bare-rpc'
 import b4a from 'b4a'
 
@@ -18,9 +18,10 @@ export default function App() {
 
   const startWorklet = () => {
     // run bundle and pass args if applicable
-    const pipe = run('/app.bundle', bundle, [String(documentDirectory), 'testString'])
+    const pipe = run('/index.bundle', bundle, [String(documentDirectory), 'testString'])
     pipeRef.current = pipe
 
+    // set up rpc
     const rpc = new RPC(pipe, (req) => {
       if (req.command === 0) {
         setMainWorkerStatus(true)
@@ -32,7 +33,7 @@ export default function App() {
         console.log(b4a.toString(req.data))
       }
     })
-
+    // send test request
     const req = rpc.request(0)
     req.send('ping')
 
