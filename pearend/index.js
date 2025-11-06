@@ -22,8 +22,8 @@ const { href } = pathToFileURL(path.join(__dirname, subthreadPath)) // use file 
 runSubWorker(href)
 
 // run a sub-worker through link
-const pearlink = 'pear://ojjsxgd3qf7upay877b687p78h8u1k1r4buujkmnbrqowtp6faqo'
-runSubWorker(pearlink)
+// const pearlink = 'pear://ojjsxgd3qf7upay877b687p78h8u1k1r4buujkmnbrqowtp6faqo'
+// runSubWorker(pearlink)
 
 function runSubWorker(link){
   // start thread
