@@ -5,53 +5,43 @@ import {
   Button,
   StyleSheet
 } from 'react-native'
-import { documentDirectory } from 'expo-file-system'
 import run from 'pear-run'
-import bundle from './index.bundle.js'
 import RPC from 'bare-rpc'
 import b4a from 'b4a'
 
 export default function App() {
-  const [mainWorkerStatus, setMainWorkerStatus] = useState(false)
-  const [subWorkerStatus, setSubWorkerStatus] = useState(false)
+  const [signals, setSignals] = useState([])
   const pipeRef = useRef(null)
 
   const startWorklet = () => {
-    // run bundle and pass args if applicable
-    const pipe = run('/index.bundle', bundle, [String(documentDirectory), 'testString'])
+    const pipe = run('../pearend/index.js')
     pipeRef.current = pipe
 
     // set up rpc
     const rpc = new RPC(pipe, (req) => {
       if (req.command === 0) {
-        setMainWorkerStatus(true)
-        console.log(b4a.toString(req.data))
-      }
-
-      if (req.command === 1) {
-        setSubWorkerStatus(true)
-        console.log(b4a.toString(req.data))
+        setSignals((prevSignals) => [...prevSignals, b4a.toString(req.data)]);
       }
     })
-    // send test request
+    // send request to pearend
     const req = rpc.request(0)
     req.send('ping')
-
   }
 
+  // cleanup
   const destroyWorklet = () => {
     if (pipeRef.current !== null) pipeRef.current.destroy()
-    setMainWorkerStatus(false)
-    setSubWorkerStatus(false)
+    setSignals([])
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Mobile-example 📱🍐</Text>
-      {(mainWorkerStatus || subWorkerStatus) ? <Button title='Reset' onPress={destroyWorklet}color='#b0d943' /> : <Button title='Test Workers' onPress={startWorklet} color='#b0d943' />}
+      {signals.length !== 0 ? <Button title='Reset' onPress={destroyWorklet}color='#b0d943' /> : <Button title='Test Workers' onPress={startWorklet} color='#b0d943' />}
       <View style={styles.container}>
-        {mainWorkerStatus && <Text style={styles.heading}>{'Main worker connected!\n👷🔌'}</Text>}
-        {subWorkerStatus &&<Text style={styles.heading}>{'Sub worker connected!\n🚇🔌'}</Text>}
+        {signals.map((signal, index) => (
+          <Text key={index} style={styles.heading}>{signal}</Text>
+        ))}
       </View>
       
     </View>

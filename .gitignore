@@ -16,3 +16,4 @@ npm-debug.*
 web-build/
 .idea
 app.bundle*
+.DS_Store
