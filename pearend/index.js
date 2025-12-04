@@ -12,7 +12,7 @@ const rpc = new RPC(pipe, (req, error) => {
   } 
 })
 
-// runSubWorker(require.resolve('./nested.js'))
+runSubWorker(require.resolve('./nested.js'))
 
 async function runSubWorker(link){
   const pipe = await run(link)
