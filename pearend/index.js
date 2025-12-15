@@ -8,7 +8,7 @@ const RPC = require('bare-rpc')
 const rpc = new RPC(pipe, (req, error) => {
   if (req.command === 0) {
     const request = rpc.request(0)
-    request.send('Main worker connected!\n👷🔌')
+    request.send('Main worker connecteeeeeeeeed!\n👷🔌')
   } 
 })
 

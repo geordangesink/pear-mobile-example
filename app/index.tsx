@@ -5,8 +5,9 @@ import {
   Button,
   StyleSheet
 } from 'react-native'
-import run from 'pear-run'
 import RPC from 'bare-rpc'
+import { Worklet } from 'react-native-bare-kit'
+import bundle from './index.bundle.js'
 import b4a from 'b4a'
 
 export default function App() {
@@ -14,7 +15,11 @@ export default function App() {
   const pipeRef = useRef(null)
 
   const startWorklet = () => {
-    const pipe = run('../pearend/index.js')
+    const worklet = new Worklet()
+    worklet.start('/index.bundle',bundle)
+    const pipe = worklet.IPC
+    console.log(pipe)
+
     pipeRef.current = pipe
 
     // set up rpc
