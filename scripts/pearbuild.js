@@ -1,33 +1,30 @@
 const Hyperswarm = require('hyperswarm')
-const crypto = require('hypercore-crypto')
-const build = require('pear-mobile/build')
-const { bundle } = require('pear-mobile/build')
+const crypto = require('bare-crypto')
+const build = require('pear-mobile')
+const { bundle } = require('pear-mobile')
 const path = require('bare-path')
 const plink = require('pear-link')
-console.log(bundle)
-// const swarm = new Hyperswarm()
-// Pear.teardown(() => {swarm.destroy()})
+const fs = require('bare-fs')
+const os = require('bare-os')
+// TODO: npm i react-native-bare-kit (needs to be in package.json deps)
+
+const pearendsPath = path.join(os.cwd(), 'pearends')
+const bundlesPath = path.join(os.cwd(), '.pear', 'bundles')
 
 async function main (){
-    const builder = await build()
-    const links = builder.bundleOrder
-
-    const rootDir = path.resolve('./')
-const entryPath = path.join(rootDir, 'pearend', 'index.js')
-const targetPath = path.join(rootDir, 'app', 'index.bundle.js')
-bundle(entryPath, targetPath)
-
-// links.forEach((link) => {
-//     const {drive} = plink.parse(link)
-
-//     const topic = crypto.discoveryKey(drive.key)
-//     swarm.on('connection', async (conn) => {
-//         console.log('connected to worker', link)
-//         conn.on('update', (d) => {
-//             console.log('got data', d)
-//         })
-//     })
-//     swarm.join(topic, {server:false, client:true})
-// })
+    await build()
+    const pearends = (await fs.readdir(pearendsPath, { withFileTypes: true })).filter((app) => app.isDirectory())
+    for (const app of pearends) {
+        const appPath = path.join(app.parentPath, app.name)
+        const pkgPath = path.join(appPath, 'package.json')
+        if (!await fs.exists(pkgPath)) throw new Error(`pearend "${app.name}" needs a package.json`)
+        const pkgContent = await fs.readFile(pkgPath, 'utf8')
+        const pkg = JSON.parse(pkgContent)
+        const entry = pkg.main ?? 'index.js'
+        const entryPath = path.join(appPath, entry)
+        const targetPath = path.join(bundlesPath , `${crypto.createHash('sha256').update(app.name).digest('hex')}.bundle.js`)
+        const basePath = await fs.exists(path.join(appPath, 'node_modules')) ? appPath : os.cwd()
+        bundle(entryPath, targetPath, basePath)
+    }
 }
 main()

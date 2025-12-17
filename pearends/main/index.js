@@ -8,11 +8,13 @@ const RPC = require('bare-rpc')
 const rpc = new RPC(pipe, (req, error) => {
   if (req.command === 0) {
     const request = rpc.request(0)
-    request.send('Main worker connecteeeeeeeeed!\n👷🔌')
+    request.send('Main worker connected!\n👷🔌')
   } 
 })
 
-runSubWorker(require.resolve('./nested.js'))
+// runSubWorker(require.resolve('../../.pear/artefacts/bundles/nzb1bkbpy6jgw5b9qei4b56wo6yd6tkktmcjqhyj3wctz59wsccy.bundle.js'))
+// runSubWorker(require.resolve('./nested.js'))
+runSubWorker('pear://nzb1bkbpy6jgw5b9qei4b56wo6yd6tkktmcjqhyj3wctz59wsccy')
 
 async function runSubWorker(link){
   const pipe = await run(link)

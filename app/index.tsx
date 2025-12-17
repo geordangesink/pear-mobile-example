@@ -7,8 +7,8 @@ import {
 } from 'react-native'
 import RPC from 'bare-rpc'
 import { Worklet } from 'react-native-bare-kit'
-import bundle from './index.bundle.js'
 import b4a from 'b4a'
+import bundle from '../.pear/bundles/0d6e4079e36703ebd37c00722f5891d28b0e2811dc114b129215123adcce3605.bundle.js'
 
 export default function App() {
   const [signals, setSignals] = useState([])
@@ -16,7 +16,8 @@ export default function App() {
 
   const startWorklet = () => {
     const worklet = new Worklet()
-    worklet.start('/index.bundle',bundle)
+    // const pipe = rn("bot") // TODO: coresponds to folders in pearends (folders are pear apps)
+    worklet.start('/0d6e4079e36703ebd37c00722f5891d28b0e2811dc114b129215123adcce3605.bundle', bundle)
     const pipe = worklet.IPC
     console.log(pipe)
 
